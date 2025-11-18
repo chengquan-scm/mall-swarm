@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @date 2024/1/30
  * @github https://github.com/macrozheng
  */
-@FeignClient("mall-admin")
+
+@FeignClient(name = "mall-admin", url = "${mall.admin.url}")
 public interface UmsAdminService {
 
     @PostMapping("/admin/login")

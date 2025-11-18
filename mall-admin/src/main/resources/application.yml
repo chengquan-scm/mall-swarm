@@ -1,13 +1,13 @@
 server:
-  port: 8080
+  port: 8082
 spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   datasource:
-    url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://192.168.2.12:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Ho_Chi_Minh&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: excel_processor
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -19,10 +19,10 @@ spring:
         login-password: druid
   data:
     redis:
-      host: localhost # Redis服务器地址
+      host: 192.168.2.15 # Redis服务器地址
       database: 0 # Redis数据库索引（默认为0）
-      port: 6379 # Redis服务器连接端口
-      password:  # Redis服务器连接密码（默认为空）
+      port: 31721 # Redis服务器连接端口
+      password: redis123 # Redis服务器连接密码（默认为空）
       timeout: 3000ms # 连接超时时间（毫秒）
   servlet:
     multipart:
@@ -65,10 +65,11 @@ aliyun:
     dir:
       prefix: mall/images/ # 上传文件夹路径前缀
 minio:
-  endpoint: http://locahost:9000 #MinIO服务所在地址
+  endpoint: http://192.168.2.108:32653 #MinIO服务所在地址
   bucketName: mall #存储桶名称
-  accessKey: minioadmin #访问的key
-  secretKey: minioadmin #访问的秘钥
+  accessKey: root-user #访问的key
+  secretKey: supersecretpassword #访问的秘钥
+
 springdoc:
   swagger-ui:
     # 修改Swagger UI路径

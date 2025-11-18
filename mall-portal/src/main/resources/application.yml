@@ -5,9 +5,9 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   datasource:
-    url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://192.168.2.12:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Ho_Chi_Minh&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: excel_processor
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -19,21 +19,35 @@ spring:
         login-password: druid
   data:
     mongodb:
-      host: localhost
+      host: 192.168.2.15
       port: 27017
-      database: mall-port
+      database: mall
+      username: admin
+      password: mall123
+      authentication-database: admin
+    
     redis:
-      host: localhost # Redis服务器地址
-      database: 0 # Redis数据库索引（默认为0）
-      port: 6379 # Redis服务器连接端口
-      password:  # Redis服务器连接密码（默认为空）
-      timeout: 3000ms # 连接超时时间（毫秒）
+      key:
+        authCode: 'ums:authCode'
+        orderId: 'oms:orderId'
+        member: 'ums:member'
+      expire:
+        authCode: 90 # 验证码超期时间
+        common: 86400 # 24小时
+      host: 192.168.2.15  # ✅ 修改为你的 Redis 地址
+      database: 0
+      port: 31721  # ✅ 修改为你的 Redis 端口
+      password: redis123  # ✅ 添加密码
+      timeout: 3000ms
+
   rabbitmq:
-    host: localhost
+    host: 192.168.2.15
     port: 5672
     virtual-host: /mall
     username: mall
     password: mall
+
+
 mybatis:
   mapper-locations:
     - classpath:dao/*.xml
@@ -53,7 +67,7 @@ management:
     info:
       enabled: true
 redis:
-  database: mall-swarm
+  # database: mall-swarm
   key:
     authCode: 'ums:authCode'
     orderId: 'oms:orderId'
@@ -61,6 +75,12 @@ redis:
   expire:
     authCode: 90 # 验证码超期时间
     common: 86400 # 24小时
+  host: 192.168.2.15  # ✅ 修改为你的 Redis 地址
+  database: mall-swarm
+  port: 31721  # ✅ 修改为你的 Redis 端口
+  password: redis123  # ✅ 添加密码
+  timeout: 3000ms
+
 rabbitmq:
   queue:
     name:

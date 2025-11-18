@@ -29,6 +29,7 @@
     </parent>
 
     <properties>
+        <docker.skip>true</docker.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <skipTests>true</skipTests>
@@ -253,6 +254,7 @@
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
                 </plugin>
+                
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
@@ -268,6 +270,7 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <skip>${docker.skip}</skip> 
                         <!-- Docker 远程管理地址-->
                         <dockerHost>${docker.host}</dockerHost>
                         <images>
@@ -296,7 +299,8 @@
                             </image>
                         </images>
                     </configuration>
-                </plugin>
+                </plugin>  
+
             </plugins>
         </pluginManagement>
         <plugins>
@@ -315,11 +319,12 @@
 
     <!--使用aliyun的镜像源提升依赖下载速度-->
     <repositories>
-        <repository>
+        <!-- <repository>
             <id>aliyunmaven</id>
             <name>aliyun</name>
             <url>https://maven.aliyun.com/repository/public</url>
-        </repository>
+        </repository> -->
+
         <repository>
             <id>central2</id>
             <name>central2</name>
@@ -329,11 +334,12 @@
 
     <!--使用aliyun的镜像源提升插件下载速度-->
     <pluginRepositories>
-        <pluginRepository>
+        <!-- <pluginRepository>
             <id>aliyunmaven</id>
             <name>aliyun</name>
             <url>https://maven.aliyun.com/repository/public</url>
-        </pluginRepository>
+        </pluginRepository> -->
+
         <pluginRepository>
             <id>central2</id>
             <name>central2</name>

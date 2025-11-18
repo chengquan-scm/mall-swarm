@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mysql://db:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: reader
-    password: 123456
+    url: jdbc:mysql://192.168.2.12:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Ho_Chi_Minh&useSSL=false
+    username: root
+    password: excel_processor
   elasticsearch:
-    uris: es:9200
+    uris: https://elasticsearch-master.elasticsearch.svc.cluster.local:9200/
 management:
   health:
     elasticsearch:
@@ -15,5 +15,5 @@ logging:
   level:
     root: info
     com.macro.mall: info
-logstash:
-  host: logstash
+# logstash:
+#   host: logstash

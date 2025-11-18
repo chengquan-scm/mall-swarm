@@ -4,6 +4,13 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  # data:
+  #   redis:
+  #     host: 192.168.2.15
+  #     port: 31721
+  #     password: redis123
+  #     database: 0
+  #     timeout: 3000ms
 management:
   endpoints:
     web:
@@ -36,3 +43,10 @@ springdoc:
     - group: 'default'
       packages-to-scan: com.macro.mall.auth.controller
   default-flat-param-object: false
+
+mall:
+  portal:
+    url: http://localhost:8085
+  admin:
+    url: http://localhost:8080
+  

@@ -2,7 +2,9 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: http://localhost:8848
+        enabled: false   # 禁用服务发现
+        server-addr: 192.168.2.15:30000
       config:
-        server-addr: http://localhost:8848
+        enabled: false   # 禁用配置中心
+        server-addr: 192.168.2.15:30000
         file-extension: yaml
