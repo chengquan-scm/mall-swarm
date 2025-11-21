@@ -1,0 +1,42 @@
+# -------- 水平自动扩缩 --------
+# 用途：根据 CPU 使用率等指标自动调整 Pod 副本数量
+# 实现弹性伸缩，应对流量波动
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mall-admin-hpa
+  namespace: master
+spec:
+  # -------- 扩缩目标 --------
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mall-admin            # 指向要扩缩的 Deployment
+
+  # -------- 副本数范围 --------
+  minReplicas: 2                # 最小副本数，确保基本可用性
+  maxReplicas: 5                # 最大副本数，防止资源过度消耗
+
+  # -------- 扩缩指标 --------
+  metrics:
+  - type: Resource              # 资源类型指标
+    resource:
+      name: cpu                 # 基于 CPU 使用率进行扩缩
+      target:
+        type: Utilization       # 目标类型：使用率
+        averageUtilization: 70  # CPU 使用率目标为 70%
+  
+  # -------- 行为配置（可选） --------
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # 缩容稳定窗口 5 分钟，防止频繁波动
+      policies:
+      - type: Percent
+        value: 50              # 每次最多缩容 50% 的 Pod
+        periodSeconds: 60      # 每 60 秒执行一次
+    scaleUp:
+      stabilizationWindowSeconds: 60   # 扩容稳定窗口 1 分钟，快速响应流量增长
+      policies:
+      - type: Percent
+        value: 100             # 紧急情况下可一次性扩容 100%
+        periodSeconds: 15      # 每 15 秒执行一次

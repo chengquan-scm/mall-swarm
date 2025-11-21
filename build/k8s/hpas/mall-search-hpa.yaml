@@ -1,0 +1,38 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mall-search-hpa
+  namespace: master
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mall-search
+  minReplicas: 1
+  maxReplicas: 3  # 搜索服务需要更大的扩缩范围应对查询高峰
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 65
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 75
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 33
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 30  # 搜索服务需要快速扩容应对突发查询
+      policies:
+      - type: Percent
+        value: 200  # 允许快速双倍扩容
+        periodSeconds: 10

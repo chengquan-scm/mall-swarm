@@ -15,7 +15,7 @@ COPY ${MODULE_NAME}/target/${MODULE_NAME}-1.0-SNAPSHOT.jar app.jar
 EXPOSE ${PORT}
 
 # 运行 Spring Boot 应用
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.config.location=/app/config/application.yaml"]
 
 
 # 示例

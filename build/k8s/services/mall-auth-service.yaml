@@ -1,0 +1,19 @@
+## 🔌 Auth Service 配置
+apiVersion: v1
+kind: Service
+metadata:
+  name: mall-auth
+  namespace: master
+  labels:
+    app: mall-auth
+    version: "master-1523f5b-71"
+
+spec:
+  type: ClusterIP
+  selector:
+    app: mall-auth
+  ports:
+    - name: http
+      port: 8401
+      targetPort: 8401
+      protocol: TCP
