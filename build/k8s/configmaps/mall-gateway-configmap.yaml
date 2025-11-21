@@ -1,0 +1,53 @@
+apiVersion: v1
+data:
+  application.yml: "server:\n  port: 8201\nspring:\n  mvc:\n    pathmatch:\n      matching-strategy:
+    ant_path_matcher\n  cloud:\n    gateway:\n      globalcors:\n        corsConfigurations:\n
+    \         '[/**]':\n            allowedOrigins:\n              - \"http://192.168.2.15:38060\"
+    \  # 允许访问的前端域名\n              - \"http://192.168.2.15:38090\"   # 允许访问的前端域名\n
+    \             - \"https://your.production.frontend.com\" # 生产环境域名\n            allowedMethods:\n
+    \             - GET\n              - POST\n              - PUT\n              -
+    DELETE\n              - OPTIONS\n            allowedHeaders:\n              -
+    \"*\"\n            allowCredentials: true\n\n      discovery:\n        locator:\n
+    \         enabled: true\n          lower-case-service-id: true #使用小写service-id\n
+    \     routes: #配置路由路径\n        - id: mall-auth\n          # uri: lb://mall-auth\n
+    \         uri: http://mall-auth:8081\n          predicates:\n            - Path=/mall-auth/**\n
+    \         filters:\n            - StripPrefix=1\n        - id: mall-admin\n          #
+    uri: lb://mall-admin\n          uri: http://mall-admin:8082\n          predicates:\n
+    \           - Path=/mall-admin/**\n          filters:\n            - StripPrefix=1\n
+    \       - id: mall-portal\n          # uri: lb://mall-portal\n          uri: http://mall-portal:8085\n
+    \         predicates:\n            - Path=/mall-portal/**\n          filters:\n
+    \           - StripPrefix=1\n        - id: mall-search\n          # uri: lb://mall-search
+    \ \n          uri: http://mall-search:8081\n          predicates:\n            -
+    Path=/mall-search/**\n          filters:\n            - StripPrefix=1\n        #
+    - id: mall-demo\n        #   uri: lb://mall-demo\n        #   predicates:\n        #
+    \    - Path=/mall-demo/**\n        #   filters:\n        #     - StripPrefix=1\n
+    \ data:\n    redis:\n      database: 0\n      port: 6379\n      host: redis-master.redis.svc.cluster.local\n
+    \     password: \"redis123\"\nsecure:\n  ignore:\n    urls: #配置白名单路径\n      -
+    \"/doc.html\"\n      - \"/v3/api-docs/swagger-config\"\n      - \"/*/v3/api-docs/default\"\n
+    \     - \"/*/v3/api-docs\"\n      - \"/*/swagger-ui/**\"\n      - \"/webjars/**\"\n
+    \     - \"/favicon.ico\"\n      - \"/webjars/**\"\n      - \"/actuator/**\"\n
+    \     - \"/mall-auth/**\"\n      - \"/mall-search/**\"\n      - \"/mall-portal/sso/login\"\n
+    \     - \"/mall-portal/sso/register\"\n      - \"/mall-portal/sso/getAuthCode\"\n
+    \     - \"/mall-portal/home/**\"\n      - \"/mall-portal/product/**\"\n      -
+    \"/mall-portal/brand/**\"\n      - \"/mall-portal/alipay/**\"\n      - \"/mall-admin/admin/login\"\n
+    \     - \"/mall-admin/admin/register\"\n      - \"/mall-admin/minio/upload\"\nmanagement:\n
+    \ health:\n    discovery:\n      enabled: false\n  endpoints:\n    web:\n      exposure:\n
+    \       include: '*' #暴露Actuator的监控端点\n  endpoint:\n    health:\n      show-details:
+    always #显示健康的详细信息\n    env:\n      show-values: always #默认Actuator的环境变量会以****显示，这里开启显示\n
+    \   configprops:\n      show-values: always #默认Actuator的配置属性会以****显示，这里开启显示\n
+    \   info:\n      enabled: true\nknife4j:\n  gateway:\n    enabled: true\n    strategy:
+    discover #网关文档聚合方式：服务发现（自动聚合）\n    discover:\n      version: openapi3 #配置OpenAPI3规范\n
+    \     enabled: true #配置开启服务发现\n      excluded-services: mall-monitor #排除监控服务\n
+    \   tags-sorter: order #配置tag排序规则\n    operations-sorter: order #配置operation排序规则\nsa-token:\n
+    \ # token名称 (同时也是cookie名称)\n  token-name: Authorization\n  # token有效期，单位秒，-1代表永不过期\n
+    \ timeout: 2592000\n  # token临时有效期 (指定时间内无操作就视为token过期)，单位秒\n  active-timeout:
+    -1\n  # 是否允许同一账号并发登录 (为false时新登录挤掉旧登录)\n  is-concurrent: true\n  # 在多人登录同一账号时，是否共用一个token
+    (为false时每次登录新建一个token)\n  is-share: false\n  # token风格\n  token-style: uuid\n
+    \ # 是否输出操作日志\n  is-log: false\n  # 是否从cookie中读取token\n  is-read-cookie: false\n
+    \ # 是否从head中读取token\n  is-read-header: true\n  # token前缀\n  token-prefix: Bearer\n
+    \ # 是否打印banner\n  is-print: false\n\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mall-gateway-config
+  namespace: master

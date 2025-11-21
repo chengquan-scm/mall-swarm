@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  application.yml: "server:\n  port: 8401\nspring:\n  mvc:\n    pathmatch:\n      matching-strategy:
+    ant_path_matcher\n  # data:\n  #   redis:\n  #     host: 192.168.2.15\n  #     port:
+    31721\n  #     password: redis123\n  #     database: 0\n  #     timeout: 3000ms\nmanagement:\n
+    \ endpoints:\n    web:\n      exposure:\n        include: '*' #暴露Actuator的监控端点\n
+    \ endpoint:\n    health:\n      show-details: always #显示健康的详细信息\n    env:\n      show-values:
+    always #默认Actuator的环境变量会以****显示，这里开启显示\n    configprops:\n      show-values: always
+    #默认Actuator的配置属性会以****显示，这里开启显示\n    info:\n      enabled: true\nspringdoc:\n
+    \ swagger-ui:\n    # 修改Swagger UI路径\n    path: /swagger-ui.html\n    # 开启Swagger
+    UI界面\n    enabled: true\n    tags-sorter: alpha\n    operations-sorter: alpha\n
+    \   show-extensions: true\n  api-docs:\n    # 修改api-docs路径\n    path: /v3/api-docs\n
+    \   # 开启api-docs\n    enabled: true\n  group-configs:\n    - group: 'default'\n
+    \     packages-to-scan: com.macro.mall.auth.controller\n  default-flat-param-object:
+    false\n\nmall:\n  portal:\n    url: http://mall-portal:8085\n  admin:\n    url:
+    http://mall-admin:8080\n\n  "
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mall-auth-config
+  namespace: master
