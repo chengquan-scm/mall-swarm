@@ -21,7 +21,7 @@ spec:
     metadata:
       labels:
         app: mall-gateway
-        version: "master-7e03adf-97"
+        version: "master-fe0ec72-98"
         component: "gateway"
         team: "mall-team"
       annotations:
@@ -62,7 +62,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-gateway
-          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-7e03adf-97
+          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-fe0ec72-98
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8201

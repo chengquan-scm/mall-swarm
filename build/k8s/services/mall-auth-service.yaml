@@ -6,7 +6,7 @@ metadata:
   namespace: master
   labels:
     app: mall-auth
-    version: "master-7e03adf-97"
+    version: "master-fe0ec72-98"
 spec:
   type: ClusterIP
   selector:
