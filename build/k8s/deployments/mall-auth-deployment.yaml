@@ -7,29 +7,25 @@ metadata:
   labels:
     app: mall-auth
     component: "auth-service"
-
 spec:
   # -------- 副本配置 --------
-  replicas: 2                # 认证服务需要高可用，但副本不宜过多（会话一致性考虑）
-
+  replicas: 2 # 认证服务需要高可用，但副本不宜过多（会话一致性考虑）
   # -------- Pod 选择器 --------
   selector:
     matchLabels:
       app: mall-auth
-
   # -------- 滚动更新策略 --------
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 1
-
   # -------- Pod 模板 --------
   template:
     metadata:
       labels:
         app: mall-auth
-        version: "master-1523f5b-71"
+        version: "master-7e03adf-97"
         component: "auth-service"
         team: "mall-swarm-team"
       annotations:
@@ -39,8 +35,7 @@ spec:
         prometheus.io/scheme: "http"
         prometheus.io/interval: "30s"
         business.domain: "ecommerce"
-        alert.severity: "critical"  # 认证服务是关键组件
-
+        alert.severity: "critical" # 认证服务是关键组件
     spec:
       # -------- 安全上下文 --------
       securityContext:
@@ -54,17 +49,13 @@ spec:
             - ALL
         seccompProfile:
           type: RuntimeDefault
-
       # -------- 镜像拉取密钥 --------
       imagePullSecrets:
         - name: harbor-secret
-
       # -------- 优雅终止配置 --------
-      terminationGracePeriodSeconds: 45  # 认证服务需要时间处理中的令牌请求
-
+      terminationGracePeriodSeconds: 45 # 认证服务需要时间处理中的令牌请求
       # -------- 重启策略 --------
       restartPolicy: Always
-
       # -------- 亲和性调度 --------
       affinity:
         podAntiAffinity:
@@ -78,17 +69,14 @@ spec:
                       values:
                         - mall-auth
                 topologyKey: "kubernetes.io/hostname"
-
       # -------- 容器定义 --------
       containers:
         - name: mall-auth
-          image: core.harbor.domain/mall-swarm/master/mall-auth:master-1523f5b-71
+          image: core.harbor.domain/mall-swarm/master/mall-auth:master-7e03adf-97
           imagePullPolicy: IfNotPresent
-
           # -------- 端口暴露 --------
           ports:
-            - containerPort: 8401  # mall-swarm 认证服务标准端口
-
+            - containerPort: 8401 # mall-swarm 认证服务标准端口
           # -------- 环境变量 --------
           env:
             - name: TZ
@@ -105,13 +93,11 @@ spec:
                 configMapKeyRef:
                   name: mall-redis-config
                   key: redis.host
-
           # -------- 存储卷挂载 --------
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -121,7 +107,6 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
-
           # -------- 就绪探针 --------
           readinessProbe:
             httpGet:
@@ -131,16 +116,14 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           # -------- 资源限制 --------
           resources:
             requests:
-              cpu: "200m"     # 认证服务需要更多 CPU 处理加密操作
+              cpu: "200m" # 认证服务需要更多 CPU 处理加密操作
               memory: "512Mi"
             limits:
               cpu: "800m"
               memory: "1024Mi"
-
       # -------- 存储卷定义 --------
       volumes:
         - name: config-volume

@@ -7,24 +7,21 @@ metadata:
   labels:
     app: mall-gateway
     component: "gateway"
-
 spec:
   replicas: 2
   selector:
     matchLabels:
       app: mall-gateway
-
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 1
-
   template:
     metadata:
       labels:
         app: mall-gateway
-        version: "master-1523f5b-71"
+        version: "master-7e03adf-97"
         component: "gateway"
         team: "mall-team"
       annotations:
@@ -34,8 +31,7 @@ spec:
         prometheus.io/scheme: "http"
         prometheus.io/interval: "30s"
         business.domain: "ecommerce"
-        alert.severity: "critical"  # 网关是关键组件，告警级别更高
-
+        alert.severity: "critical" # 网关是关键组件，告警级别更高
     spec:
       securityContext:
         allowPrivilegeEscalation: false
@@ -48,14 +44,10 @@ spec:
             - ALL
         seccompProfile:
           type: RuntimeDefault
-
       imagePullSecrets:
         - name: harbor-secret
-
-      terminationGracePeriodSeconds: 45  # 网关需要更长时间处理现有连接
-
+      terminationGracePeriodSeconds: 45 # 网关需要更长时间处理现有连接
       restartPolicy: Always
-
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -68,21 +60,17 @@ spec:
                       values:
                         - mall-gateway
                 topologyKey: "kubernetes.io/hostname"
-
       containers:
         - name: mall-gateway
-          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-1523f5b-71
+          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-7e03adf-97
           imagePullPolicy: IfNotPresent
-
           ports:
             - containerPort: 8201
-
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh
             - name: JAVA_OPTS
-              value: "-Xmx512m -Xms256m"  # 网关通常需要更多内存
-
+              value: "-Xmx512m -Xms256m" # 网关通常需要更多内存
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
@@ -90,7 +78,6 @@ spec:
             - name: routes-volume
               mountPath: /app/config/routes
               readOnly: true
-
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -99,7 +86,6 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
-
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -108,7 +94,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           resources:
             requests:
               cpu: "300m"
@@ -116,7 +101,6 @@ spec:
             limits:
               cpu: "1000m"
               memory: "1024Mi"
-
       volumes:
         - name: config-volume
           configMap:

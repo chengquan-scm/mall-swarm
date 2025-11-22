@@ -5,13 +5,12 @@ metadata:
   namespace: master
   labels:
     app: mall-gateway
-    version: "master-1523f5b-71"
+    version: "master-7e03adf-97"
   annotations:
-    # 如果是入口网关，可能需要 LoadBalancer
-    # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-
+  # 如果是入口网关，可能需要 LoadBalancer
+  # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
-  type: LoadBalancer  # 网关通常需要对外暴露
+  type: LoadBalancer # 网关通常需要对外暴露
   selector:
     app: mall-gateway
   ports:

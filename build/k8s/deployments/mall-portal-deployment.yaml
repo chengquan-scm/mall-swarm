@@ -6,24 +6,21 @@ metadata:
   labels:
     app: mall-portal
     component: "portal-service"
-
 spec:
-  replicas: 2  # 门户服务直接面向用户，需要更多副本
+  replicas: 2 # 门户服务直接面向用户，需要更多副本
   selector:
     matchLabels:
       app: mall-portal
-
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 2  # 门户服务可以容忍更多的临时副本
-
+      maxSurge: 2 # 门户服务可以容忍更多的临时副本
   template:
     metadata:
       labels:
         app: mall-portal
-        version: "master-1523f5b-71"
+        version: "master-7e03adf-97"
         component: "portal-service"
         team: "mall-swarm-team"
       annotations:
@@ -33,7 +30,6 @@ spec:
         prometheus.io/scheme: "http"
         business.domain: "ecommerce"
         alert.severity: "high"
-
     spec:
       securityContext:
         allowPrivilegeEscalation: false
@@ -46,14 +42,10 @@ spec:
             - ALL
         seccompProfile:
           type: RuntimeDefault
-
       imagePullSecrets:
         - name: harbor-secret
-
       terminationGracePeriodSeconds: 30
-
       restartPolicy: Always
-
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -66,26 +58,21 @@ spec:
                       values:
                         - mall-portal
                 topologyKey: "kubernetes.io/hostname"
-
       containers:
         - name: mall-portal
-          image: core.harbor.domain/mall-swarm/master/mall-portal:master-1523f5b-71
+          image: core.harbor.domain/mall-swarm/master/mall-portal:master-7e03adf-97
           imagePullPolicy: IfNotPresent
-
           ports:
-            - containerPort: 8085  # mall-swarm 门户服务标准端口
-
+            - containerPort: 8085 # mall-swarm 门户服务标准端口
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes,prod"
-
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -94,7 +81,6 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
-
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -103,7 +89,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           resources:
             requests:
               cpu: "200m"
@@ -111,7 +96,6 @@ spec:
             limits:
               cpu: "500m"
               memory: "1024Mi"
-
       volumes:
         - name: config-volume
           configMap:

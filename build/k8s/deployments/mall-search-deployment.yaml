@@ -6,24 +6,21 @@ metadata:
   labels:
     app: mall-search
     component: "search-service"
-
 spec:
-  replicas: 1  # 搜索服务通常需要更多副本处理并发查询
+  replicas: 1 # 搜索服务通常需要更多副本处理并发查询
   selector:
     matchLabels:
       app: mall-search
-
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 1
-
   template:
     metadata:
       labels:
         app: mall-search
-        version: "master-1523f5b-71"
+        version: "master-7e03adf-97"
         component: "search-service"
         team: "mall-swarm-team"
       annotations:
@@ -32,7 +29,6 @@ spec:
         prometheus.io/path: "/actuator/prometheus"
         prometheus.io/scheme: "http"
         business.domain: "ecommerce"
-
     spec:
       securityContext:
         allowPrivilegeEscalation: false
@@ -45,14 +41,10 @@ spec:
             - ALL
         seccompProfile:
           type: RuntimeDefault
-
       imagePullSecrets:
         - name: harbor-secret
-
-      terminationGracePeriodSeconds: 60  # 搜索服务需要时间完成索引操作
-
+      terminationGracePeriodSeconds: 60 # 搜索服务需要时间完成索引操作
       restartPolicy: Always
-
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -65,15 +57,12 @@ spec:
                       values:
                         - mall-search
                 topologyKey: "kubernetes.io/hostname"
-
       containers:
         - name: mall-search
-          image: core.harbor.domain/mall-swarm/master/mall-search:master-1523f5b-71
+          image: core.harbor.domain/mall-swarm/master/mall-search:master-7e03adf-97
           imagePullPolicy: IfNotPresent
-
           ports:
-            - containerPort: 8081  # mall-swarm 搜索服务标准端口
-
+            - containerPort: 8081 # mall-swarm 搜索服务标准端口
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh
@@ -88,22 +77,19 @@ spec:
                   name: mall-es-config
                   key: es.port
             - name: JAVA_OPTS
-              value: "-Xmx1g -Xms512m"  # 搜索服务需要更多内存
-
+              value: "-Xmx1g -Xms512m" # 搜索服务需要更多内存
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8081
-            initialDelaySeconds: 90  # 搜索服务启动较慢，需要加载索引
+            initialDelaySeconds: 90 # 搜索服务启动较慢，需要加载索引
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
-
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -112,15 +98,13 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
-
           resources:
             requests:
               cpu: "100m"
-              memory: "512Mi"  # 搜索服务内存需求较高
+              memory: "512Mi" # 搜索服务内存需求较高
             limits:
               cpu: "1000m"
               memory: "2048Mi"
-
       volumes:
         - name: config-volume
           configMap:
