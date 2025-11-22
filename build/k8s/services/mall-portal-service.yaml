@@ -5,7 +5,7 @@ metadata:
   namespace: master
   labels:
     app: mall-portal
-    version: "master-3d783c5-102"
+    version: "master-cc335cf-103"
 spec:
   type: ClusterIP
   selector:
