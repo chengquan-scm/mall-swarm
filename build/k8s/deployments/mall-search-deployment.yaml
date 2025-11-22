@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-search
-        version: "master-4b89d84-101"
+        version: "master-3d783c5-102"
         component: "search-service"
         team: "mall-swarm-team"
       annotations:
@@ -34,7 +34,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 1005
         runAsGroup: 1005
-
       imagePullSecrets:
         - name: harbor-secret
       terminationGracePeriodSeconds: 60
@@ -53,7 +52,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-search
-          image: core.harbor.domain/mall-swarm/master/mall-search:master-4b89d84-101
+          image: core.harbor.domain/mall-swarm/master/mall-search:master-3d783c5-102
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081
@@ -72,7 +71,6 @@ spec:
                   key: es.port
             - name: JAVA_OPTS
               value: "-Xmx1g -Xms512m"
-          
           # ------------------------------
           # ✔ SecurityContext 正确位置
           # ------------------------------
@@ -84,12 +82,10 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
-
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -98,7 +94,6 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
-
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -107,7 +102,6 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
-
           resources:
             requests:
               cpu: "100m"
@@ -115,7 +109,6 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2048Mi"
-
       volumes:
         - name: config-volume
           configMap:
