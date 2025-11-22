@@ -25,7 +25,7 @@ spec:
     metadata:
       labels:
         app: mall-auth
-        version: "master-4b89d84-101"
+        version: "master-3d783c5-102"
         component: "auth-service"
         team: "mall-swarm-team"
       annotations:
@@ -44,17 +44,13 @@ spec:
         runAsGroup: 1004
         seccompProfile:
           type: RuntimeDefault
-
       # -------- 镜像拉取密钥 --------
       imagePullSecrets:
         - name: harbor-secret
-
       # -------- 优雅终止配置 --------
       terminationGracePeriodSeconds: 45 # 认证服务需要时间处理中的令牌请求
-
       # -------- 重启策略 --------
       restartPolicy: Always
-
       # -------- 亲和性调度 --------
       affinity:
         podAntiAffinity:
@@ -68,13 +64,11 @@ spec:
                       values:
                         - mall-auth
                 topologyKey: "kubernetes.io/hostname"
-
       # -------- 容器定义 --------
       containers:
         - name: mall-auth
-          image: core.harbor.domain/mall-swarm/master/mall-auth:master-4b89d84-101
+          image: core.harbor.domain/mall-swarm/master/mall-auth:master-3d783c5-102
           imagePullPolicy: IfNotPresent
-
           # ===== 修正：container 级 securityContext =====
           securityContext:
             allowPrivilegeEscalation: false
@@ -82,11 +76,9 @@ spec:
             capabilities:
               drop:
                 - ALL
-
           # -------- 端口暴露 --------
           ports:
             - containerPort: 8401 # mall-swarm 认证服务标准端口
-
           # -------- 环境变量 --------
           env:
             - name: TZ
@@ -103,13 +95,11 @@ spec:
                 configMapKeyRef:
                   name: mall-redis-config
                   key: redis.host
-
           # -------- 存储卷挂载 --------
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -119,7 +109,6 @@ spec:
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
-
           # -------- 就绪探针 --------
           readinessProbe:
             httpGet:
@@ -129,7 +118,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           # -------- 资源限制 --------
           resources:
             requests:
@@ -138,7 +126,6 @@ spec:
             limits:
               cpu: "800m"
               memory: "1024Mi"
-
       # -------- 存储卷定义 --------
       volumes:
         - name: config-volume

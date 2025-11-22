@@ -24,7 +24,7 @@ spec:
     metadata:
       labels:
         app: mall-admin
-        version: "master-4b89d84-101" # 添加版本标签，便于监控和故障排查
+        version: "master-3d783c5-102" # 添加版本标签，便于监控和故障排查
         component: "backend" # 组件类型标签
         team: "mall-team" # 负责团队标签
       annotations:
@@ -42,7 +42,6 @@ spec:
         runAsNonRoot: true # 强制非 root 运行（冗余但明确）
         runAsUser: 1000 # 指定用户 ID
         runAsGroup: 1000 # 指定组 ID
-
       # -------- 镜像拉取密钥 --------
       imagePullSecrets:
         - name: harbor-secret # 用于从私有 Harbor 仓库拉取镜像的认证密钥
@@ -65,13 +64,11 @@ spec:
                       values:
                         - mall-admin # 匹配具有 app=mall-admin 标签的 Pod
                 topologyKey: "kubernetes.io/hostname" # 拓扑域，基于节点主机名进行分布
-
       # -------- 容器定义 --------
       containers:
         - name: mall-admin # 容器名称，在 Pod 内唯一
-          image: core.harbor.domain/mall-swarm/master/mall-admin:master-4b89d84-101
+          image: core.harbor.domain/mall-swarm/master/mall-admin:master-3d783c5-102
           imagePullPolicy: IfNotPresent # 镜像拉取策略：如果本地存在就不拉取
-
           # -------- 容器级安全上下文增强 --------
           securityContext:
             allowPrivilegeEscalation: false # 禁止提权，防止容器内进程获取更高权限
@@ -84,22 +81,18 @@ spec:
                 - ALL # 丢弃所有 Linux capabilities，最小权限原则
             seccompProfile:
               type: RuntimeDefault # 使用默认的 seccomp 配置文件，限制系统调用
-
           # -------- 端口暴露 --------
           ports:
             - containerPort: 8082 # 容器监听的端口，用于服务发现
-
           # -------- 环境变量 --------
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh # 设置容器时区为胡志明市时间
-
           # -------- 存储卷挂载 --------
           volumeMounts:
             - name: config-volume # 引用下面定义的 volume 名称
               mountPath: /app/config/application.yaml # 配置文件在容器内的挂载路径
               subPath: application.yaml # 只挂载 ConfigMap 中的特定文件
-
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -109,7 +102,6 @@ spec:
             periodSeconds: 20 # 每 20 秒执行一次健康检查
             timeoutSeconds: 5 # 检查超时时间 5 秒
             failureThreshold: 3 # 连续失败 3 次后认为容器不健康
-
           # -------- 就绪探针 --------
           readinessProbe:
             httpGet:
@@ -119,7 +111,6 @@ spec:
             periodSeconds: 10 # 每 10 秒检查一次
             timeoutSeconds: 5
             failureThreshold: 3 # 连续失败 3 次后将 Pod 从服务端点移除
-
           # -------- 资源限制 --------
           resources:
             requests: # 容器启动的最小资源需求，影响调度
@@ -128,7 +119,6 @@ spec:
             limits: # 容器能使用的最大资源，防止资源耗尽
               cpu: "500m" # 0.5 个 CPU 核心
               memory: "512Mi" # 512 Mebibytes 内存
-
       # -------- 存储卷定义 --------
       volumes:
         - name: config-volume # 存储卷名称，与 volumeMounts 对应

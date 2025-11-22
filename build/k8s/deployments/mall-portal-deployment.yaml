@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-portal
-        version: "master-4b89d84-101"
+        version: "master-3d783c5-102"
         component: "portal-service"
         team: "mall-swarm-team"
       annotations:
@@ -37,7 +37,6 @@ spec:
         runAsGroup: 1006
         seccompProfile:
           type: RuntimeDefault
-
       imagePullSecrets:
         - name: harbor-secret
       terminationGracePeriodSeconds: 30
@@ -56,9 +55,8 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-portal
-          image: core.harbor.domain/mall-swarm/master/mall-portal:master-4b89d84-101
+          image: core.harbor.domain/mall-swarm/master/mall-portal:master-3d783c5-102
           imagePullPolicy: IfNotPresent
-
           # ===== 修正安全字段：移动到 container.securityContext =====
           securityContext:
             allowPrivilegeEscalation: false
@@ -66,7 +64,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-
           ports:
             - containerPort: 8085 # mall-swarm 门户服务标准端口
           env:
