@@ -79,9 +79,6 @@ spec:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
-            - name: routes-volume
-              mountPath: /app/config/routes
-              readOnly: true
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -112,6 +109,3 @@ spec:
             items:
               - key: application.yaml
                 path: application.yaml
-        - name: routes-volume
-          configMap:
-            name: mall-gateway-routes
