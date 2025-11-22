@@ -1,4 +1,4 @@
-# Kubernetes API 版本和资源类型定义
+# Kubernetes API 版本和资源类型定义 
 apiVersion: apps/v1 # 使用 apps/v1 API 版本，这是 Deployment 的标准版本
 kind: Deployment # 资源类型为 Deployment，用于管理 Pod 的部署和更新
 metadata:
@@ -93,6 +93,8 @@ spec:
             - name: config-volume # 引用下面定义的 volume 名称
               mountPath: /app/config/application.yaml # 配置文件在容器内的挂载路径
               subPath: application.yaml # 只挂载 ConfigMap 中的特定文件
+            - name: tmp-volume        # 新增 emptyDir 挂载
+              mountPath: /tmp           # 容器 /tmp 使用空目录
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -100,7 +102,7 @@ spec:
               port: 8082 # 检查端口
             initialDelaySeconds: 30 # 容器启动后等待 30 秒开始第一次检查
             periodSeconds: 20 # 每 20 秒执行一次健康检查
-            timeoutSeconds: 5 # 检查超时时间 5 秒
+            timeoutSeconds: 5 # 检查超时时间
             failureThreshold: 3 # 连续失败 3 次后认为容器不健康
           # -------- 就绪探针 --------
           readinessProbe:
@@ -127,3 +129,5 @@ spec:
             items:
               - key: application.yaml # ConfigMap 中的键名
                 path: application.yaml # 挂载到容器内的文件名
+        - name: tmp-volume            # 新增 emptyDir 卷
+          emptyDir: {}                 # 临时目录，Pod 生命周期内可写
