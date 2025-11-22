@@ -88,6 +88,8 @@ spec:
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh # 设置容器时区为胡志明市时间
+            - name: SPRING_APPLICATION_NAME
+              value: mall-admin
           # -------- 存储卷挂载 --------
           volumeMounts:
             - name: config-volume # 引用下面定义的 volume 名称
