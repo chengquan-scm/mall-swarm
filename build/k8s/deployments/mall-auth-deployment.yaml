@@ -100,6 +100,8 @@ spec:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
+            - name: tmp-volume
+              mountPath: /tmp # 新增挂载临时目录
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -134,3 +136,5 @@ spec:
             items:
               - key: application.yaml
                 path: application.yaml
+        - name: tmp-volume # 新增 emptyDir 存储卷
+          emptyDir: {}
