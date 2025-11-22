@@ -85,11 +85,6 @@ spec:
               value: Asia/Ho_Chi_Minh
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"
-            - name: REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: mall-redis-config
-                  key: redis.host
           # -------- 存储卷挂载 --------
           volumeMounts:
             - name: config-volume
