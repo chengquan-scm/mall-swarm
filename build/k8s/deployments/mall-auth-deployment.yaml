@@ -25,7 +25,7 @@ spec:
     metadata:
       labels:
         app: mall-auth
-        version: "master-d2ca744-99"
+        version: "master-4b89d84-101"
         component: "auth-service"
         team: "mall-swarm-team"
       annotations:
@@ -72,7 +72,7 @@ spec:
       # -------- 容器定义 --------
       containers:
         - name: mall-auth
-          image: core.harbor.domain/mall-swarm/master/mall-auth:master-d2ca744-99
+          image: core.harbor.domain/mall-swarm/master/mall-auth:master-4b89d84-101
           imagePullPolicy: IfNotPresent
 
           # ===== 修正：container 级 securityContext =====
