@@ -59,18 +59,10 @@ spec:
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh
-            - name: ELASTICSEARCH_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: mall-es-config
-                  key: es.host
-            - name: ELASTICSEARCH_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: mall-es-config
-                  key: es.port
             - name: JAVA_OPTS
               value: "-Xmx1g -Xms512m"
+            - name: SPRING_APPLICATION_NAME
+              value: "mall-search" # 新增，避免占位符无法解析
           # ------------------------------
           # ✔ SecurityContext 正确位置
           # ------------------------------
@@ -86,6 +78,8 @@ spec:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
+            - name: tmp-volume
+              mountPath: /tmp # 新增挂载临时目录
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -116,3 +110,5 @@ spec:
             items:
               - key: application.yaml
                 path: application.yaml
+        - name: tmp-volume # 新增 emptyDir 存储卷
+          emptyDir: {}

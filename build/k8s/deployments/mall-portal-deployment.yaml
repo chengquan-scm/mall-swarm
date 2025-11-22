@@ -71,10 +71,14 @@ spec:
               value: Asia/Ho_Chi_Minh
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes,prod"
+            - name: SPRING_APPLICATION_NAME
+              value: "mall-portal" # 新增，避免占位符无法解析
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
               subPath: application.yaml
+            - name: tmp-volume
+              mountPath: /tmp # 新增挂载临时目录
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
@@ -105,3 +109,5 @@ spec:
             items:
               - key: application.yaml
                 path: application.yaml
+        - name: tmp-volume # 新增 emptyDir 存储卷
+          emptyDir: {}
