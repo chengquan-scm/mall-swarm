@@ -24,7 +24,7 @@ spec:
     metadata:
       labels:
         app: mall-admin
-        version: "master-fe0ec72-98" # 添加版本标签，便于监控和故障排查
+        version: "master-d2ca744-99" # 添加版本标签，便于监控和故障排查
         component: "backend" # 组件类型标签
         team: "mall-team" # 负责团队标签
       annotations:
@@ -75,7 +75,7 @@ spec:
       # -------- 容器定义 --------
       containers:
         - name: mall-admin # 容器名称，在 Pod 内唯一
-          image: core.harbor.domain/mall-swarm/master/mall-admin:master-fe0ec72-98
+          image: core.harbor.domain/mall-swarm/master/mall-admin:master-d2ca744-99
           imagePullPolicy: IfNotPresent # 镜像拉取策略：如果本地存在就不拉取
           # -------- 端口暴露 --------
           ports:
