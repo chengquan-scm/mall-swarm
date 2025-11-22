@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-gateway
-        version: "master-cc335cf-103"
+        version: "master-4071364-104"
         component: "gateway"
         team: "mall-team"
       annotations:
@@ -55,7 +55,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-gateway
-          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-cc335cf-103
+          image: core.harbor.domain/mall-swarm/master/mall-gateway:master-4071364-104
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

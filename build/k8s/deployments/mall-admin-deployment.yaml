@@ -24,7 +24,7 @@ spec:
     metadata:
       labels:
         app: mall-admin
-        version: "master-cc335cf-103" # 添加版本标签，便于监控和故障排查
+        version: "master-4071364-104" # 添加版本标签，便于监控和故障排查
         component: "backend" # 组件类型标签
         team: "mall-team" # 负责团队标签
       annotations:
@@ -67,7 +67,7 @@ spec:
       # -------- 容器定义 --------
       containers:
         - name: mall-admin # 容器名称，在 Pod 内唯一
-          image: core.harbor.domain/mall-swarm/master/mall-admin:master-cc335cf-103
+          image: core.harbor.domain/mall-swarm/master/mall-admin:master-4071364-104
           imagePullPolicy: IfNotPresent # 镜像拉取策略：如果本地存在就不拉取
           # -------- 容器级安全上下文增强 --------
           securityContext:
@@ -95,8 +95,8 @@ spec:
             - name: config-volume # 引用下面定义的 volume 名称
               mountPath: /app/config/application.yaml # 配置文件在容器内的挂载路径
               subPath: application.yaml # 只挂载 ConfigMap 中的特定文件
-            - name: tmp-volume        # 新增 emptyDir 挂载
-              mountPath: /tmp           # 容器 /tmp 使用空目录
+            - name: tmp-volume # 新增 emptyDir 挂载
+              mountPath: /tmp # 容器 /tmp 使用空目录
           # -------- 存活探针 --------
           livenessProbe:
             httpGet:
@@ -131,5 +131,5 @@ spec:
             items:
               - key: application.yaml # ConfigMap 中的键名
                 path: application.yaml # 挂载到容器内的文件名
-        - name: tmp-volume            # 新增 emptyDir 卷
-          emptyDir: {}                 # 临时目录，Pod 生命周期内可写
+        - name: tmp-volume # 新增 emptyDir 卷
+          emptyDir: {} # 临时目录，Pod 生命周期内可写
