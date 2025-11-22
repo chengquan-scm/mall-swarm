@@ -116,7 +116,7 @@ sa-token:
   # 是否打印banner
   is-print: false
 
-# 日志路径
-logging:
-  file:
-    path: /var/logs
+# # 日志路径
+# logging:
+#   file:
+#     path: /var/logs
