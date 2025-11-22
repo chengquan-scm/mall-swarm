@@ -1,4 +1,3 @@
-# Kubernetes API 版本和资源类型定义
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,22 +30,16 @@ spec:
         prometheus.io/scheme: "http"
         prometheus.io/interval: "30s"
         business.domain: "ecommerce"
-        alert.severity: "critical" # 网关是关键组件，告警级别更高
+        alert.severity: "critical"
     spec:
+      # Pod 级安全配置（保留最基础字段即可）
       securityContext:
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
-        capabilities:
-          drop:
-            - ALL
-        seccompProfile:
-          type: RuntimeDefault
       imagePullSecrets:
         - name: harbor-secret
-      terminationGracePeriodSeconds: 45 # 网关需要更长时间处理现有连接
+      terminationGracePeriodSeconds: 45
       restartPolicy: Always
       affinity:
         podAntiAffinity:
@@ -64,13 +57,24 @@ spec:
         - name: mall-gateway
           image: core.harbor.domain/mall-swarm/master/mall-gateway:master-fe0ec72-98
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
           ports:
             - containerPort: 8201
           env:
             - name: TZ
               value: Asia/Ho_Chi_Minh
             - name: JAVA_OPTS
-              value: "-Xmx512m -Xms256m" # 网关通常需要更多内存
+              value: "-Xmx512m -Xms256m"
           volumeMounts:
             - name: config-volume
               mountPath: /app/config/application.yaml
