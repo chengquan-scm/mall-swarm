@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-portal
-        version: "master-d2ca744-99"
+        version: "master-4b89d84-101"
         component: "portal-service"
         team: "mall-swarm-team"
       annotations:
@@ -60,7 +60,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-portal
-          image: core.harbor.domain/mall-swarm/master/mall-portal:master-d2ca744-99
+          image: core.harbor.domain/mall-swarm/master/mall-portal:master-4b89d84-101
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8085 # mall-swarm 门户服务标准端口

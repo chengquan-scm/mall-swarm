@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-search
-        version: "master-d2ca744-99"
+        version: "master-4b89d84-101"
         component: "search-service"
         team: "mall-swarm-team"
       annotations:
@@ -59,7 +59,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-search
-          image: core.harbor.domain/mall-swarm/master/mall-search:master-d2ca744-99
+          image: core.harbor.domain/mall-swarm/master/mall-search:master-4b89d84-101
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8081 # mall-swarm 搜索服务标准端口
