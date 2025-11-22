@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: mall-portal
-        version: "master-fe0ec72-98"
+        version: "master-d2ca744-99"
         component: "portal-service"
         team: "mall-swarm-team"
       annotations:
@@ -56,7 +56,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: mall-portal
-          image: core.harbor.domain/mall-swarm/master/mall-portal:master-fe0ec72-98
+          image: core.harbor.domain/mall-swarm/master/mall-portal:master-d2ca744-99
           imagePullPolicy: IfNotPresent
 
           # ===== 修正安全字段：移动到 container.securityContext =====

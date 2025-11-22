@@ -6,7 +6,7 @@ metadata:
   namespace: master # 与 Deployment 相同的命名空间
   labels:
     app: mall-admin # 服务标签
-    version: "master-fe0ec72-98" # 版本标签
+    version: "master-d2ca744-99" # 版本标签
 spec:
   type: ClusterIP # Service 类型：集群内部 IP，只能在集群内访问
   # -------- Pod 选择器 --------
