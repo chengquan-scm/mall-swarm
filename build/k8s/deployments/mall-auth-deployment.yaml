@@ -85,11 +85,6 @@ spec:
               value: Asia/Ho_Chi_Minh
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"
-            - name: JWT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: mall-auth-secrets
-                  key: jwt.secret
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
