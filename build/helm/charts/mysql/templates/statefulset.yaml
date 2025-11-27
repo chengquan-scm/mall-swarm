@@ -38,6 +38,13 @@ spec:
             - name: config
               mountPath: /etc/mysql/my.cnf
               subPath: my.cnf
+      volumes:
+        - name: initdb
+          configMap:
+            name: {{ include "mysql.fullname" . }}-initdb
+        - name: config
+          configMap:
+            name: {{ include "mysql.fullname" . }}-config
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -47,10 +54,3 @@ spec:
         resources:
           requests:
             storage: {{ .Values.persistence.size }}
-  volumes:
-    - name: initdb
-      configMap:
-        name: {{ include "mysql.fullname" . }}-initdb
-    - name: config
-      configMap:
-        name: {{ include "mysql.fullname" . }}-initdb
