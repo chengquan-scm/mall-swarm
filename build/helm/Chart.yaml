@@ -1,6 +1,6 @@
 apiVersion: v2
-name: mall-swarm
-description: Helm chart for mall microservices
+name: mall
+description: Mall微服务应用Helm Chart
 type: application
-version: 1.0.0
-appVersion: "1.0"
+version: 0.1.0
+appVersion: "master-4071364-104"

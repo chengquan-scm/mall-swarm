@@ -1,37 +1,101 @@
-{{- range $serviceName, $serviceConfig := .Values.services }}
-{{- if $serviceConfig.enabled }}
+## 🔌 Service 配置（详细注释版）
+apiVersion: v1 # 使用核心 v1 API 版本
+kind: Service # 资源类型为 Service，用于暴露 Pod 网络
+metadata:
+  name: mall-admin # Service 名称
+  namespace: {{ .Values.global.namespace }} # 与 Deployment 相同的命名空间
+  labels:
+    app: mall-admin # 服务标签
+    version: "{{ .Values.image.tag }}" # 版本标签
+spec:
+  type: ClusterIP # Service 类型：集群内部 IP，只能在集群内访问
+  # -------- Pod 选择器 --------
+  selector:
+    app: mall-admin # 选择具有 app=mall-admin 标签的 Pod 作为后端
+  # -------- 端口配置 --------
+  ports:
+    - name: http # 端口名称，用于识别
+      port: 8082 # Service 对外暴露的端口
+      targetPort: 8082 # 目标 Pod 的端口，与 containerPort 对应
+      protocol: TCP # 网络协议：TCP
+---
+## 🔌 Auth Service 配置
+apiVersion: v1
+kind: Service
+metadata:
+  name: mall-auth
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: mall-auth
+    version: "{{ .Values.image.tag }}"
+spec:
+  type: ClusterIP
+  selector:
+    app: mall-auth
+  ports:
+    - name: http
+      port: 8401
+      targetPort: 8401
+      protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $serviceName }}
-  namespace: {{ $.Values.global.namespace }}
+  name: mall-gateway
+  namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "mall.serviceLabels" (dict "appName" $serviceName "version" (index $.Values.versions $serviceName)) | nindent 4 }}
-  {{- if eq $serviceName "gateway" }}
+    app: mall-gateway
+    version: "{{ .Values.image.tag }}"
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-  {{- end }}
+  # 如果是入口网关，可能需要 LoadBalancer
+  # service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 spec:
-  type: {{ $serviceConfig.serviceType | default "ClusterIP" }}
+  type: LoadBalancer # 网关通常需要对外暴露
   selector:
-    app: {{ $serviceName }}
+    app: mall-gateway
   ports:
-    {{- if $serviceConfig.servicePorts }}
-    {{- range $serviceConfig.servicePorts }}
-    - name: {{ .name }}
-      port: {{ .port }}
-      targetPort: {{ .targetPort }}
-      protocol: TCP
-    {{- end }}
-    {{- else }}
     - name: http
-      port: {{ $serviceConfig.port }}
-      targetPort: {{ $serviceConfig.port }}
+      port: 80
+      targetPort: 8201
       protocol: TCP
-    {{- end }}
-  {{- if eq $serviceName "gateway" }}
+    - name: https
+      port: 443
+      targetPort: 8201
+      protocol: TCP
   sessionAffinity: None
-  {{- end }}
-{{- end }}
-{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mall-portal
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: mall-portal
+    version: "{{ .Values.image.tag }}"
+spec:
+  type: ClusterIP
+  selector:
+    app: mall-portal
+  ports:
+    - name: http
+      port: 8085
+      targetPort: 8085
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mall-search
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: mall-search
+    version: "{{ .Values.image.tag }}"
+spec:
+  type: ClusterIP
+  selector:
+    app: mall-search
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
