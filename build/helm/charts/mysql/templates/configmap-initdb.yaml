@@ -6,5 +6,3 @@ metadata:
 data:
   {{ .Values.initdb.sqlFile }}: |-
 {{ .Files.Get "files/mall.sql" | indent 4 }}
-  my.cnf: |-
-{{ .Values.configuration | indent 4 }}
