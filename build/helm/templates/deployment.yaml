@@ -1,0 +1,55 @@
+{{- range $serviceName, $serviceConfig := .Values.services }}
+{{- if $serviceConfig.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "mall.serviceLabels" (dict "appName" $serviceName "version" (index $.Values.versions $serviceName)) | nindent 4 }}
+spec:
+  replicas: {{ $serviceConfig.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $serviceName }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        {{- include "mall.podLabels" (dict "appName" $serviceName "version" (index $.Values.versions $serviceName) "component" $serviceConfig.component "team" $.Values.global.team) | nindent 8 }}
+      annotations:
+        {{- include "mall.podAnnotations" (dict "port" $serviceConfig.port "monitoring" $.Values.monitoring "businessDomain" $.Values.global.businessDomain "alertSeverity" (index $.Values.alerts $serviceName)) | nindent 8 }}
+    spec:
+      {{- include "mall.podSecurityContext" (dict "securityContext" $serviceConfig.securityContext) | nindent 6 }}
+      imagePullSecrets:
+        - name: {{ $.Values.global.imagePullSecrets }}
+      terminationGracePeriodSeconds: {{ $serviceConfig.terminationGracePeriodSeconds | default 30 }}
+      restartPolicy: Always
+      affinity:
+        {{- include "mall.affinity" (dict "root" $ "appName" $serviceName) | nindent 8 }}
+      containers:
+        - name: {{ $serviceName }}
+          image: {{ include "mall.image" (dict "root" $ "service" $serviceName "version" (index $.Values.versions $serviceName)) }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          {{- include "mall.containerSecurityContext" (dict "securityContext" $serviceConfig.securityContext) | nindent 10 }}
+          ports:
+            - containerPort: {{ $serviceConfig.port }}
+          env:
+            {{- include "mall.env" (dict "root" $ "env" $serviceConfig.env) | nindent 12 }}
+          volumeMounts:
+            {{- include "mall.volumeMounts" (dict "root" $) | nindent 12 }}
+          livenessProbe:
+            {{- include "mall.probe" (dict "path" $serviceConfig.livenessProbe.path "port" $serviceConfig.port "initialDelaySeconds" $serviceConfig.livenessProbe.initialDelaySeconds "periodSeconds" $serviceConfig.livenessProbe.periodSeconds "timeoutSeconds" $serviceConfig.livenessProbe.timeoutSeconds "failureThreshold" $serviceConfig.livenessProbe.failureThreshold) | nindent 12 }}
+          readinessProbe:
+            {{- include "mall.probe" (dict "path" $serviceConfig.readinessProbe.path "port" $serviceConfig.port "initialDelaySeconds" $serviceConfig.readinessProbe.initialDelaySeconds "periodSeconds" $serviceConfig.readinessProbe.periodSeconds "timeoutSeconds" $serviceConfig.readinessProbe.timeoutSeconds "failureThreshold" $serviceConfig.readinessProbe.failureThreshold) | nindent 12 }}
+          resources:
+            {{- toYaml $serviceConfig.resources | nindent 12 }}
+      volumes:
+        {{- include "mall.volumes" (dict "root" $ "appName" $serviceName) | nindent 8 }}
+{{- end }}
+{{- end }}

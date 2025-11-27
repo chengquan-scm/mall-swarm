@@ -1,0 +1,37 @@
+{{- range $serviceName, $serviceConfig := .Values.services }}
+{{- if $serviceConfig.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    {{- include "mall.serviceLabels" (dict "appName" $serviceName "version" (index $.Values.versions $serviceName)) | nindent 4 }}
+  {{- if eq $serviceName "gateway" }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+  {{- end }}
+spec:
+  type: {{ $serviceConfig.serviceType | default "ClusterIP" }}
+  selector:
+    app: {{ $serviceName }}
+  ports:
+    {{- if $serviceConfig.servicePorts }}
+    {{- range $serviceConfig.servicePorts }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: TCP
+    {{- end }}
+    {{- else }}
+    - name: http
+      port: {{ $serviceConfig.port }}
+      targetPort: {{ $serviceConfig.port }}
+      protocol: TCP
+    {{- end }}
+  {{- if eq $serviceName "gateway" }}
+  sessionAffinity: None
+  {{- end }}
+{{- end }}
+{{- end }}
