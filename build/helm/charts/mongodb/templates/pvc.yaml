@@ -1,10 +1,27 @@
+{{- if .Values.mongodb.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "mongodb.fullname" . }}-data
+  name: {{ include "mongodb-mall.name" . }}-pvc
+  labels:
+    {{- include "mongodb-mall.labels" . | nindent 4 }}
+  {{- if .Values.mongodb.persistence.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.mongodb.persistence.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
-  accessModes: ["ReadWriteOnce"]
+  accessModes:
+    - {{ .Values.mongodb.persistence.accessMode }}
   resources:
     requests:
-      storage: {{ .Values.persistence.size }}
-  storageClassName: {{ .Values.persistence.storageClass | default "standard" }}
+      storage: {{ .Values.mongodb.persistence.size }}
+  {{- if .Values.mongodb.persistence.storageClass }}
+  {{- if (eq "-" .Values.mongodb.persistence.storageClass) }}
+  storageClassName: ""  # 显式设置为空字符串，不使用 StorageClass
+  {{- else }}
+  storageClassName: {{ .Values.mongodb.persistence.storageClass | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}

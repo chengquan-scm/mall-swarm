@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mongodb-mall.name" . }}
+  labels:
+    {{- include "mongodb-mall.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mongodb-mall.selectorLabels" . | nindent 6 }}
+  strategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mongodb-mall.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+        
+        # ========== 环境变量配置 ==========
+        env:
+        # Root 用户认证环境变量
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: {{ .Values.mongodb.auth.rootUsername | quote }}
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "mongodb-mall.name" . }}-secret
+              key: mongodb-root-password
+        # 初始化数据库环境变量
+        - name: MONGO_INITDB_DATABASE
+          value: {{ .Values.mongodb.auth.database | quote }}
+        
+        # ========== 端口配置 ==========
+        ports:
+        - name: mongodb
+          containerPort: 27017
+          protocol: TCP
+        
+        # ========== 卷挂载配置 ==========
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db  # MongoDB 数据目录
+        
+        # ========== 存活探针配置 ==========
+        {{- if .Values.probes.liveness.enabled }}
+        livenessProbe:
+          exec:
+            # 使用 mongosh 执行 ping 命令检查数据库状态
+            command:
+            - mongosh
+            - --eval
+            - "db.adminCommand('ping')"
+          initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+        {{- end }}
+        
+        # ========== 就绪探针配置 ==========
+        {{- if .Values.probes.readiness.enabled }}
+        readinessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.adminCommand('ping')"
+          initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+        {{- end }}
+        
+        # ========== 资源限制配置 ==========
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      
+      # ========== 数据卷配置 ==========
+      volumes:
+      - name: mongodb-data
+        {{- if .Values.mongodb.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "mongodb-mall.name" . }}-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+      
+      # ========== 调度配置 ==========
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

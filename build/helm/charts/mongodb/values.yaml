@@ -1,20 +1,96 @@
+# values.yaml
+
+# ========== MongoDB 镜像配置 ==========
 image:
   repository: mongo
   tag: "5.0"
   pullPolicy: IfNotPresent
 
-auth:
-  rootUser: admin
-  rootPassword: mall123
-  initDatabase: mall
+# ========== MongoDB 认证和数据库配置 ==========
+mongodb:
+  # 认证配置
+  auth:
+    enabled: true
+    # Root 用户凭据 - 用于管理数据库
+    rootUsername: admin
+    rootPassword: mall123
+    # 应用数据库名称
+    database: mall
+  
+  # 服务配置
+  service:
+    type: ClusterIP  # 可选: ClusterIP, NodePort, LoadBalancer
+    port: 27017
+    # 如果 type 为 NodePort，可以指定节点端口
+    nodePort: null
+  
+  # 持久化配置 - 使用动态 PVC
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: ""  # 为空时使用默认 StorageClass，设置为 "-" 表示不使用 StorageClass
+    accessMode: ReadWriteOnce
+    # PVC 注解（可选）
+    annotations: {}
+    # 示例:
+    # annotations:
+    #   helm.sh/resource-policy: keep  # Helm 删除时保留 PVC
 
-service:
-  type: ClusterIP
-  port: 27017
+# ========== 健康检查探针配置 ==========
+probes:
+  # 存活探针 - 检查容器是否正在运行
+  liveness:
+    enabled: true
+    initialDelaySeconds: 30  # 容器启动后等待时间
+    periodSeconds: 10        # 检查频率
+    timeoutSeconds: 5        # 检查超时时间
+    failureThreshold: 3      # 失败次数阈值
+  
+  # 就绪探针 - 检查容器是否准备好接收流量
+  readiness:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 
-persistence:
-  enabled: true
-  size: 5Gi
-  storageClass: "nfs-client"
+# ========== 资源限制配置 ==========
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
 
-resources: {}
+# ========== 安全上下文配置 ==========
+# Pod 安全上下文
+podSecurityContext:
+  fsGroup: 999        # MongoDB 容器用户的 GID
+  runAsUser: 999      # MongoDB 容器用户的 UID
+  runAsNonRoot: true
+
+# 容器安全上下文
+containerSecurityContext:
+  runAsUser: 999
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+# ========== 调度配置 ==========
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# ========== 其他配置 ==========
+# 副本数量
+replicaCount: 1
+
+# 更新策略
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 1
