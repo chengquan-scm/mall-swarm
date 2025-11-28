@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mongodb
+description: Simple MongoDB Helm Chart (single instance)
+type: application
+version: 0.1.0
+appVersion: "5.0"

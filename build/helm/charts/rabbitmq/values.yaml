@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: rabbitmq
+  tag: "3.10.5-management"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  portAMQP: 5672
+  portMgmt: 15672
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 10Gi
+  mountPath: /var/lib/rabbitmq
+
+rabbitmq:
+  user: "mall"
+  password: "mall"
+  vhost: "/mall"
+
+# 探针配置
+probe:
+  liveness:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+  readiness:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3

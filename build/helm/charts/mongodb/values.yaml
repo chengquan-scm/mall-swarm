@@ -1,0 +1,20 @@
+image:
+  repository: mongo
+  tag: "5.0"
+  pullPolicy: IfNotPresent
+
+auth:
+  rootUser: admin
+  rootPassword: mall123
+  initDatabase: mall
+
+service:
+  type: ClusterIP
+  port: 27017
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: ""
+
+resources: {}
